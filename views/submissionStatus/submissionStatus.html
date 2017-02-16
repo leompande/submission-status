@@ -1,0 +1,96 @@
+<h3>Submission status <a href="javascript:getHelpContent('reporting_reporting_rate_summary')" title="Help"><i
+        class="fa fa-question-circle"></i></a>
+</h3>
+<div id="critiera" class="inputCriteria" style="width: 660px; height: auto; padding: 20px; margin-top: 0px;">
+    <div style="width: 340px; float: left; margin-top: 0px;">
+        <label>Administrative unit</label>
+        <div id="selectionTree"
+             style="width: 330px; height: 202px; margin-top: 0px; background-image: none; background-repeat: no-repeat;">
+            <div ng-if="!data.organisationUnits" class="loader" style="margin-top: 0px;">
+                <img src="../../../images/ajax-loader-bar.gif">Loading Administartive Units
+            </div>
+            <c-tree ng-if="data.organisationUnits" tree-modal='data.organisationUnits' ng-model="data.selectedOrgUnit"
+                    config="data.config"></c-tree>
+        </div>
+    </div>
+    <div style="margin-top: 0px;">
+        <input type="radio" name="criteria" id="registrationRadio" ng-model="data.criteria" value="registration"
+               checked="checked">
+        <label for="registrationRadio">Based on complete entry form registrations</label><br>
+        <input type="radio" name="criteria" id="compulsoryRadio" ng-model="data.criteria" value="compulsory">
+        <label for="compulsoryRadio">Based on compulsory data elements</label><br><br>
+
+        <!-- DataSet -->
+        <select id="dataSetId" name="dataSetId" style="width:330px;" ng-disabled="loadTracker"
+                ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'sortOrder'" ng-if="dataSet.name!='Prior Estimates for Missing Data Estimation Entry Form'"
+                style="width:330px"
+                ng-model="data.dataSet">
+            <option value="">[ Select Report ]</option>
+        </select>
+        <br/>
+        <br/>
+        <!-- PeriodType -->
+        <select ng-disabled="loadTracker" ng-model="data.periodTypeName" style="width:174px">
+            <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
+            <option value="">[ Select Period Type ]</option>
+            <option ng-repeat="type in data.periodType"
+                    value="{{type.name}}">
+                {{type.name}}
+            </option>
+        </select>
+        <input type="button" style="width:75px" ng-disabled="!data.periodTypes[data.periodTypeName].allowPrevious"
+               value="Prev year" ng-click="displayPreviousPeriods()">
+        <input type="button" style="width:75px" ng-disabled="!data.periodTypes[data.periodTypeName].allowNext"
+               value="Next year" ng-click="displayNextPeriods()"><br>
+        <br/>
+
+        <select ng-disabled="loadTracker" ng-model="data.period" style="width:174px">
+            <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
+            <option value="">[ Select Period ]</option>
+            <option ng-repeat="periodType in data.periodTypes[data.periodTypeName].list"
+                    value="{{periodType.value}}">
+                {{periodType.name}}
+            </option>
+        </select>
+
+        <!-- Org unit group sets -->
+
+        <span id="advancedOptions" style="display:none">
+     <br></span>
+
+        <!-- Get report -->
+
+        <input id="reportButton" type="button" value="Get report" style="width:135px" ng-click="getReport('html')">
+        &nbsp;
+        <a id="advancedOptionsLink" href="javascript:showAdvancedOptions()">Show more options</a><br><br>
+
+        <!-- Export -->
+
+        <input type="button" value="Download as PDF" style="width:135px" ng-click="getReport( 'pdf' )">
+        <input type="button" value="Download as Excel" style="width:135px" ng-click="getReport( 'xls' )"><br>
+        <input type="button" value="Download as CSV" style="width:135px" ng-click="getReport( 'csv' )">
+    </div>
+</div>
+<style>
+    .resultDiv
+    {
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 20px;
+    }
+</style>
+<div>
+    <div ng-bind-html="data.completeness" id="contentDiv" ng-if="data.completeness" class="resultDiv" style="">
+        <style type="text/css">
+        .gridTable th, .gridTable td
+        {
+            text-align: center;
+            width: 150px;
+            line-height: 170%;
+        }
+    </style>
+    </div>
+    <div ng-if="!data.completeness" class="loader" style="margin-top: 0px;">
+            <img src="../../../images/ajax-loader-bar.gif">Loading Submission Status
+    </div>
+</div>
