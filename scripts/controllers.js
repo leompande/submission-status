@@ -230,7 +230,6 @@ var appControllers = angular.module('appControllers', [])
             var exist = false;
             arrayList.forEach(function (data) {
                 if (data == comparableValue){
-                    console.log(comparableValue,"Exists");
                     exist = true;return false;
                 }
             })
