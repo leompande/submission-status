@@ -21,10 +21,14 @@
         <label for="compulsoryRadio">Based on compulsory data elements</label><br><br>
 
         <!-- DataSet -->
+
+        <!--ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'sortOrder'" ng-if="dataSet.name!='Prior Estimates for Missing Data Estimation Entry Form'"-->
+        <!--style="width:330px"-->
+        <!--ng-model="data.dataSet">-->
         <select id="dataSetId" name="dataSetId" style="width:330px;" ng-disabled="loadTracker"
-                ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'sortOrder'" ng-if="dataSet.name!='Prior Estimates for Missing Data Estimation Entry Form'"
-                style="width:330px"
-                ng-model="data.dataSet">
+        ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'sortOrder'|filter:selective"
+        style="width:330px"
+        ng-model="data.dataSet">
             <option value="">[ Select Report ]</option>
         </select>
         <br/>

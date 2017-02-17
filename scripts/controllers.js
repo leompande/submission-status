@@ -33,7 +33,7 @@ function browserPrint2() {
 }
 /* Controllers */
 var appControllers = angular.module('appControllers', [])
-    .controller('SubmissionStatusReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $window, $location, $routeParams, ReportService, toaster) {
+    .controller('SubmissionStatusReportController', function ($scope, DHIS2URL, $http, $sce, $timeout,$filter, $window, $location, $routeParams, ReportService, toaster) {
         $scope.data = {
             selectedOrgUnit: undefined,
             config: {},
@@ -226,30 +226,48 @@ var appControllers = angular.module('appControllers', [])
             });
             return retPeriodType;
         }
+        var inArray = function(arrayList,comparableValue){
+            var exist = false;
+            arrayList.forEach(function (data) {
+                if (data == comparableValue){
+                    console.log(comparableValue,"Exists");
+                    exist = true;return false;
+                }
+            })
+            return exist;
+        }
+
+        $scope.fakeDataSetModalChange = function(backupDataset){
+
+            $scope.data.dataSets = [];
+            $scope.data.dataSets = backupDataset;
+
+        }
+        $scope.filteredForms = [];
+        $scope.selective = function(inputValue){
+            var dataSetTobeFiltered = ['Prior Estimates for Missing Data Estimation Entry Form'];
+
+            if ($scope.filteredForms.length>0){
+                $scope.filteredForms.push(dataSetTobeFiltered[0]);
+                dataSetTobeFiltered = $scope.filteredForms;
+            }
+            if (!inArray(dataSetTobeFiltered,inputValue.name)){
+                return inputValue;
+            }
+
+        }
+
         $scope.$watch("data.dataSet", function (value) {
             if (value) {
                 $scope.data.period = "";
                 $scope.data.periodTypes[value.periodType].populateList();
             }
         });
+
+
+
         $scope.loadingArchive = false;
-        $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
-            // if (selectedOrgUnit) {
-            //     var found = false;
-            //
-            //     $scope.data.dataSet.organisationUnits.forEach(function (orgUnt) {
-            //         if (orgUnt.id == selectedOrgUnit.id) {
-            //             found = true;
-            //         }
-            //     });
-            //     if (!found) {
-            //         toaster.pop('warning', "Warning", "Please select a corresponding organisation for the report");
-            //         $scope.data.config.toggleSelection($scope.data.selectedOrgUnit);
-            //         $scope.data.selectedOrgUnit = undefined;
-            //     }
-            //
-            // }
-        });
+
         $scope.archiveDataElements = [];
         $scope.loadTracker = "Loading Data Sets";
         $scope.setOrganisationUnitSelection = function (orgUnit) {
@@ -261,6 +279,10 @@ var appControllers = angular.module('appControllers', [])
                 })
             }
         }
+
+
+
+
         $scope.doesValueExist = function (period) {
             var returnVal = false;
             $scope.data.periodTypes[$scope.data.dataSet.periodType].list.forEach(function (p) {
@@ -293,6 +315,28 @@ var appControllers = angular.module('appControllers', [])
                 }else if (dataSet.name == "District Annual Entry Form (DF03)") {
                     dataSet.sortOrder = 6;
                 }
+
+                $scope.backupDataset = $scope.data.dataSets;
+                $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
+                    if (selectedOrgUnit) {
+
+
+                        if ( selectedOrgUnit.level == 4 )
+                        {
+
+                            $scope.data.dataSets.forEach(function(dataSet){
+                                if (dataSet.name.indexOf('District')>=0){
+                                    $scope.filteredForms.push(dataSet.name);
+                                }
+
+                            })
+
+                        }else{
+                            $scope.filteredForms=[];
+                        }
+                        $scope.fakeDataSetModalChange($scope.backupDataset);
+                    }
+                });
 
 
 
@@ -408,6 +452,17 @@ var appControllers = angular.module('appControllers', [])
             });
 
         }
+
+
+        $scope.allowAnalytics = false;
+        ReportService.getUser().then(function (user) {
+            $scope.user = user;
+            $scope.user.userCredentials.userRoles.forEach(function (role) {
+                if ((role.authorities.indexOf("F_DATA_MART_ADMIN") > -1) || (role.authorities.indexOf("ALL") > -1)) {
+                    $scope.allowAnalytics = true;
+                }
+            })
+        });
 
 
     })

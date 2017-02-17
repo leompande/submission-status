@@ -39,3 +39,8 @@ var appFilters = angular.module('appFilters', [])
             return toTitleCase(input.split("_").join(" "));
         };
     })
+    // .filter('selective',function(){
+    //     return function(source,input) {
+    //         console.log(input,source);
+    //     }
+    // })
