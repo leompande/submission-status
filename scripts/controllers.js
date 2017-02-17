@@ -319,6 +319,9 @@ var appControllers = angular.module('appControllers', [])
                     dataSet.sortOrder = 6;
                 }
 
+                /**
+                 * This checking is done after all dataset are loaded
+                 * */
                 $scope.backupDataset = $scope.data.dataSets;
                 $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
                     if (selectedOrgUnit) {
