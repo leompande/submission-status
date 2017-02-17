@@ -237,6 +237,9 @@ var appControllers = angular.module('appControllers', [])
             return exist;
         }
 
+        /**
+         * This function fake model change in order to triger filtering
+         * */
         $scope.fakeDataSetModalChange = function(backupDataset){
 
             $scope.data.dataSets = [];
