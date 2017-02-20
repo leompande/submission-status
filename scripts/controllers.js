@@ -33,7 +33,7 @@ function browserPrint2() {
 }
 /* Controllers */
 var appControllers = angular.module('appControllers', [])
-    .controller('SubmissionStatusReportController', function ($scope, DHIS2URL, $http, $sce, $timeout,$filter, $window, $location, $routeParams, ReportService, toaster) {
+    .controller('SubmissionStatusReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $filter, $window, $location, $routeParams, ReportService, toaster) {
         $scope.data = {
             selectedOrgUnit: undefined,
             config: {},
@@ -183,20 +183,18 @@ var appControllers = angular.module('appControllers', [])
                         var date = new Date();
                         this.list = [];
 
-                        for (var i = this.currentDate.getFullYear() - 4; i <=this.currentDate.getFullYear(); i++) {
+                        for (var i = this.currentDate.getFullYear() - 4; i <= this.currentDate.getFullYear(); i++) {
 
-                            if (i == this.currentDate.getFullYear() && date.getMonth() < 6 ) {
+                            if (i == this.currentDate.getFullYear() && date.getMonth() < 6) {
 
-                                    continue;
-                                }
-
-                            if ( date.getMonth() < 6 && i+1 == this.currentDate.getFullYear() && date.getMonth()) {
-
-                                    continue;
+                                continue;
                             }
-                                    this.list.unshift({name: "July " + i + " - June " + (i + 1), value: i + "July"});
 
+                            if (date.getMonth() < 6 && i + 1 == this.currentDate.getFullYear() && date.getMonth()) {
 
+                                continue;
+                            }
+                            this.list.unshift({name: "July " + i + " - June " + (i + 1), value: i + "July"});
 
 
                         }
@@ -226,11 +224,12 @@ var appControllers = angular.module('appControllers', [])
             });
             return retPeriodType;
         }
-        var inArray = function(arrayList,comparableValue){
+        var inArray = function (arrayList, comparableValue) {
             var exist = false;
             arrayList.forEach(function (data) {
-                if (data == comparableValue){
-                    exist = true;return false;
+                if (data == comparableValue) {
+                    exist = true;
+                    return false;
                 }
             })
             return exist;
@@ -239,23 +238,36 @@ var appControllers = angular.module('appControllers', [])
         /**
          * This function fake model change in order to triger filtering
          * */
-        $scope.fakeDataSetModalChange = function(backupDataset){
+        $scope.fakeDataSetModalChange = function (backupDataset) {
 
             $scope.data.dataSets = [];
             $scope.data.dataSets = backupDataset;
 
         }
         $scope.filteredForms = [];
-        $scope.selective = function(inputValue){
+        $scope.selective = function (inputValue) {
             var dataSetTobeFiltered = ['Prior Estimates for Missing Data Estimation Entry Form'];
 
-            if ($scope.filteredForms.length>0){
+            if ($scope.filteredForms.length > 0) {
                 $scope.filteredForms.push(dataSetTobeFiltered[0]);
                 dataSetTobeFiltered = $scope.filteredForms;
             }
-            if (!inArray(dataSetTobeFiltered,inputValue.name)){
+            if (!inArray(dataSetTobeFiltered, inputValue.name)) {
                 return inputValue;
             }
+
+        }
+
+
+        $scope.filterPeriodType = function (inputValue) {
+
+            if (inArray($scope.periodTypesToShow,inputValue.name))
+            {
+                return inputValue;
+            }
+
+
+
 
         }
 
@@ -265,7 +277,6 @@ var appControllers = angular.module('appControllers', [])
                 $scope.data.periodTypes[value.periodType].populateList();
             }
         });
-
 
 
         $scope.loadingArchive = false;
@@ -281,9 +292,38 @@ var appControllers = angular.module('appControllers', [])
                 })
             }
         }
+        $scope.disableForDataSet = false;
+
+            $scope.$watch("data.dataSet",function(dataSetSelected){
+                $scope.periodTypesToShow = [];
+
+                if (dataSetSelected){
+                    $scope.disableForDataSet = false;
 
 
+                    if ( dataSetSelected.periodType == "FinancialJuly" )
+                    {
+                        $scope.periodTypesToShow.push("FinancialJuly");
+                    }
 
+                    if ( dataSetSelected.periodType == "Quarterly" )
+                    {
+                        $scope.periodTypesToShow.push("FinancialJuly");
+                        $scope.periodTypesToShow.push("Quarterly");
+                    }
+
+                    if ( dataSetSelected.periodType == "Monthly" )
+                    {
+                        $scope.periodTypesToShow.push("FinancialJuly");
+                        $scope.periodTypesToShow.push("Quarterly");
+                        $scope.periodTypesToShow.push("Monthly");
+                    }
+
+                }else{
+                    $scope.disableForDataSet = true;
+                }
+
+        })
 
         $scope.doesValueExist = function (period) {
             var returnVal = false;
@@ -297,57 +337,60 @@ var appControllers = angular.module('appControllers', [])
         $http.get(DHIS2URL + "api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]&filter=name:like:Entry Form").then(function (results) {
             $scope.data.dataSets = results.data.dataSets;
             $scope.loadTracker = undefined;
-
+            var fakeDataSetArray = [];
             $scope.data.dataSets.forEach(function (dataSet) {
                 if ($routeParams.dataSet) {
                     if (dataSet.id == $routeParams.dataSet) {
                         $scope.data.dataSet = dataSet;
                     }
                 }
+
                 if (dataSet.name == "Ward Annual Target Entry Form (WF00)") {
                     dataSet.sortOrder = 1;
+                    fakeDataSetArray[0] = dataSet;
                 } else if (dataSet.name == "Ward Monthly Entry Form (WF01)") {
                     dataSet.sortOrder = 2;
+                    fakeDataSetArray[1] = dataSet;
                 } else if (dataSet.name == "Ward Quarterly Entry Form (WF02)") {
                     dataSet.sortOrder = 3;
+                    fakeDataSetArray[2] = dataSet;
                 } else if (dataSet.name == "Ward Annual Entry Form (WF03)") {
                     dataSet.sortOrder = 4;
+                    fakeDataSetArray[3] = dataSet;
                 } else if (dataSet.name == "District Quarterly Entry Form (DF02)") {
                     dataSet.sortOrder = 5;
-                }else if (dataSet.name == "District Annual Entry Form (DF03)") {
+                    fakeDataSetArray[4] = dataSet;
+                } else if (dataSet.name == "District Annual Entry Form (DF03)") {
                     dataSet.sortOrder = 6;
+                    fakeDataSetArray[5] = dataSet;
                 }
-
-                /**
-                 * This checking is done after all dataset are loaded
-                 * */
-                $scope.backupDataset = $scope.data.dataSets;
-                $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
-                    if (selectedOrgUnit) {
-
-
-                        if ( selectedOrgUnit.level == 4 )
-                        {
-
-                            $scope.data.dataSets.forEach(function(dataSet){
-                                if (dataSet.name.indexOf('District')>=0){
-                                    $scope.filteredForms.push(dataSet.name);
-                                }
-
-                            })
-
-                        }else{
-                            $scope.filteredForms=[];
-                        }
-                        $scope.fakeDataSetModalChange($scope.backupDataset);
-                    }
-                });
-
 
 
             });
+            $scope.data.dataSets = fakeDataSetArray;
+            /**
+             * This checking is done after all dataset are loaded
+             * */
+            $scope.backupDataset = $scope.data.dataSets;
+            $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
+                if (selectedOrgUnit) {
 
-            $scope.data.dataSets.splice(6);
+
+                    if (selectedOrgUnit.level == 4) {
+
+                        $scope.data.dataSets.forEach(function (dataSet) {
+                            if (dataSet.name.indexOf('District') >= 0) {
+                                $scope.filteredForms.push(dataSet.name);
+                            }
+                        })
+
+                    } else {
+                        $scope.filteredForms = [];
+                    }
+                    $scope.fakeDataSetModalChange($scope.backupDataset);
+                }
+            });
+
             ReportService.getUser().then(function (results) {
                 var orgUnitIds = [];
                 results.organisationUnits.forEach(function (orgUnit) {
@@ -382,7 +425,12 @@ var appControllers = angular.module('appControllers', [])
                         $scope.data.organisationUnits = [];
                         toaster.pop('error', "Error" + error.status, "Error Loading Organisation Units. Please try again");
                     });
-            })
+            });
+
+            /**
+             * Watching $scope.data.dataSets to control period type
+             * */
+
 
         }, function (error) {
             $scope.loadTracker = undefined;
@@ -433,7 +481,6 @@ var appControllers = angular.module('appControllers', [])
                             $scope.data.completeness = "<p></p>";
                             $window.open(completenessUrl, '_blank');
                             $scope.loadTracker = undefined;
-                            console.log(completenessUrl);
                             return false;
                         }
 

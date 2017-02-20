@@ -21,12 +21,8 @@
         <label for="compulsoryRadio">Based on compulsory data elements</label><br><br>
 
         <!-- DataSet -->
-
-        <!--ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'sortOrder'" ng-if="dataSet.name!='Prior Estimates for Missing Data Estimation Entry Form'"-->
-        <!--style="width:330px"-->
-        <!--ng-model="data.dataSet">-->
         <select id="dataSetId" name="dataSetId" style="width:330px;" ng-disabled="loadTracker"
-        ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'sortOrder'|filter:selective"
+        ng-options="dataSet as dataSet.name for dataSet in data.dataSets | filter:selective | orderBy:'sortOrder'"
         style="width:330px"
         ng-model="data.dataSet">
             <option value="">[ Select Report ]</option>
@@ -34,10 +30,9 @@
         <br/>
         <br/>
         <!-- PeriodType -->
-        <select ng-disabled="loadTracker" ng-model="data.periodTypeName" style="width:174px">
-            <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
+        <select ng-disabled="loadTracker||disableForDataSet" ng-model="data.periodTypeName" style="width:174px">
             <option value="">[ Select Period Type ]</option>
-            <option ng-repeat="type in data.periodType"
+            <option ng-repeat="type in data.periodType | filter:filterPeriodType"
                     value="{{type.name}}">
                 {{type.name}}
             </option>
@@ -48,8 +43,7 @@
                value="Next year" ng-click="displayNextPeriods()"><br>
         <br/>
 
-        <select ng-disabled="loadTracker" ng-model="data.period" style="width:174px">
-            <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
+        <select ng-disabled="loadTracker||disableForDataSet" ng-model="data.period" style="width:174px">
             <option value="">[ Select Period ]</option>
             <option ng-repeat="periodType in data.periodTypes[data.periodTypeName].list"
                     value="{{periodType.value}}">
