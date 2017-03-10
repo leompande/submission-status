@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  manifest="app.appcache" ng-app="app">
+<html manifest="app.appcache" ng-app="app">
 <head>
     <title>Submission Status</title>
 
@@ -72,7 +72,7 @@
         z-index: 0;
     }
 
-    #showLeftBar,#rightBar {
+    #showLeftBar, #rightBar {
 
         margin-top: 70px;
     }
@@ -93,18 +93,23 @@
         margin-top: 150px;
         margin-left: 300px;
     }
+
     .introItem {
         height: 100px;
     }
+
     #leftBar {
         margin-top: 10px;
     }
+
     .navbar-inverse .navbar-brand {
         color: #ffffff !important;
     }
+
     #cde table {
         border-collapse: separate;
     }
+
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
         display: none !important;
     }
@@ -135,7 +140,6 @@
 <body ng-controller="SubmissionStatusReportController">
 <d2-header-bar></d2-header-bar>
 <toaster-container></toaster-container>
-<!--<div ng-include="'views/header.html'"></div>-->
 <span id="showLeftBar" ng-style="showStyle">
         <a href="javascript:dhis2.leftBar.showAnimated()" title="Show menu">
             <i class="fa fa-arrow-right leftBarIcon"></i></a>
@@ -144,13 +148,12 @@
     <div id="hideLeftBar">
         <a href="javascript:dhis2.leftBar.hideAnimated()"
            title="Hide menu"
-           id="hideMainMenuLink"><!--ng-click="myStyle={'margin-left': '50px'};showStyle={'display': 'block'}"-->
+           id="hideMainMenuLink">
             <i class="fa fa-arrow-left leftBarIcon"></i></a>
         <a href="javascript:dhis2.leftBar.extendAnimated()"
 
            title="Extend menu" id="extendMainMenuLink">
             <i class="fa fa-arrow-right leftBarIcon"></i></a>
-        <!--ng-click="myStyle['margin-left']='270px';showStyle={'display': 'none'}"-->
     </div>
 
     <div id="leftBarContents">
@@ -159,7 +162,8 @@
         <ul>
             <li><a href="../../../api/apps/standardreport/index.html#/dataSetReport">Standard Report&nbsp;</a></li>
             <li><a href="../../../dhis-web-reporting/displayViewReportForm.action">Custom Report&nbsp;</a></li>
-            <li><a href="../../../api/apps/submission-status/index.html#/Submission-Status">Submission Status&nbsp;</a>
+            <li><a href="../../../api/apps/submission-status/index.html#/Submission-Status">Submission and Creation
+                Status</a>
             </li>
         </ul>
 
@@ -172,7 +176,7 @@
 
 <div id="headerMessage" class="bold"></div>
 
-<div class="page" id="mainPages" >
+<div class="page" id="mainPages">
     <div ng-view></div>
 </div>
 

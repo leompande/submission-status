@@ -334,7 +334,7 @@ var appControllers = angular.module('appControllers', [])
             })
             return returnVal;
         }
-        $http.get(DHIS2URL + "api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]&filter=name:like:Entry Form").then(function (results) {
+        $http.get(DHIS2URL + "api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
             $scope.data.dataSets = results.data.dataSets;
             $scope.loadTracker = undefined;
             var fakeDataSetArray = [];
@@ -346,24 +346,47 @@ var appControllers = angular.module('appControllers', [])
                 }
 
                 if (dataSet.name == "Ward Annual Target Entry Form (WF00)") {
+                    dataSet.name = dataSet.name+" Submission";
                     dataSet.sortOrder = 1;
                     fakeDataSetArray[0] = dataSet;
                 } else if (dataSet.name == "Ward Monthly Entry Form (WF01)") {
+                    dataSet.name = dataSet.name+" Submission";
                     dataSet.sortOrder = 2;
                     fakeDataSetArray[1] = dataSet;
                 } else if (dataSet.name == "Ward Quarterly Entry Form (WF02)") {
+                    dataSet.name = dataSet.name+" Submission";
                     dataSet.sortOrder = 3;
                     fakeDataSetArray[2] = dataSet;
                 } else if (dataSet.name == "Ward Annual Entry Form (WF03)") {
+                    dataSet.name = dataSet.name+" Submission";
                     dataSet.sortOrder = 4;
                     fakeDataSetArray[3] = dataSet;
                 } else if (dataSet.name == "District Quarterly Entry Form (DF02)") {
+                    dataSet.name = dataSet.name+" Submission";
                     dataSet.sortOrder = 5;
                     fakeDataSetArray[4] = dataSet;
                 } else if (dataSet.name == "District Annual Entry Form (DF03)") {
+                    dataSet.name = dataSet.name+" Submission";
                     dataSet.sortOrder = 6;
                     fakeDataSetArray[5] = dataSet;
                 }
+                else if (dataSet.name == "Monthly District Report (DR01)") {
+                    dataSet.name = dataSet.name+" Creation";
+                    dataSet.sortOrder = 7;
+                    fakeDataSetArray[6] = dataSet;
+                }
+                else if (dataSet.name == "Quarterly District Report (DR02)") {
+                    dataSet.name = dataSet.name+" Creation";
+                    dataSet.sortOrder = 8;
+                    fakeDataSetArray[7] = dataSet;
+                }
+                else if (dataSet.name == "District Annual Report (DR03)") {
+                    dataSet.name = dataSet.name+" Creation";
+                    dataSet.sortOrder = 9;
+                    fakeDataSetArray[8] = dataSet;
+                }
+
+                console.log(dataSet.name);
 
 
             });

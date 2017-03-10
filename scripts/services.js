@@ -1506,10 +1506,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                     returnDate.startDate = period.substr(0, 4) + "-" + firstMonthString + "-01";
                     returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4), lastMonth);
                 } else {
-                    /*var monthVal = parseInt(period.substr(5));
-                     if(monthVal < 10){
-                     monthVal = "0" + monthVal;
-                     }*/
+
                     returnDate.startDate = period.substr(0, 4) + "-" + period.substr(4) + "-01";
                     returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4), period.substr(4));
                 }
